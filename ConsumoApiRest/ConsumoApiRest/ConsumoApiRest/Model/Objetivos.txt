@@ -1,0 +1,5 @@
+﻿Semana 7 
+1) Vamos a consumir Servicios WEB
+2) Grid 
+3) Reportes Tabulares (Get)
+4) Selectores
