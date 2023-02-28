@@ -1,13 +1,66 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:ConsumoApiRest.ViewModel"
              x:Class="ConsumoApiRest.View.ViewPersona"
              Title="Persona">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Formulario de Persona"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
-    </ContentPage.Content>
+
+    <ContentPage.BindingContext>
+        <local:ViewModelPersona></local:ViewModelPersona>
+    </ContentPage.BindingContext>
+    
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            
+            <RowDefinition Height="50" ></RowDefinition>
+            <RowDefinition Height="50" ></RowDefinition>
+            <RowDefinition Height="50" ></RowDefinition>
+            <RowDefinition Height="50" ></RowDefinition>
+            <RowDefinition Height="*" ></RowDefinition>
+
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" ></ColumnDefinition>
+            <ColumnDefinition Width="*" ></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Label VerticalTextAlignment="End"  Text="Nombre" Grid.Column="0" Grid.Row="0" />
+        <Entry Text="{Binding Nombre}" Grid.Column="1" Grid.Row="0" />
+
+        <Label VerticalTextAlignment="End" Text="Apellido" Grid.Column="0" Grid.Row="1" />
+        <Entry Text="{Binding Apellido}" Grid.Column="1" Grid.Row="1" />
+
+        <Label VerticalTextAlignment="End" Text="Fecha Nacimiento" Grid.Column="0" Grid.Row="2" />
+        <DatePicker Date="{Binding FechaNacimiento}"  MinimumDate="{Binding FechaMin}"  Grid.Column="1" Grid.Row="2" />
+
+        <Button Command="{Binding listarPersonas}" Text="Get Persona" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" />
+
+        <ListView Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0"   ItemsSource="{Binding ListPersonas}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Padding="10">
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" ></ColumnDefinition>
+                                <ColumnDefinition Width="*" ></ColumnDefinition>
+                                <ColumnDefinition Width="*" ></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Text="{Binding id_persona}"  Grid.Row="0" Grid.Column="0" />
+                            <Label Text="{Binding nombre_persona}" Grid.Row="0" Grid.Column="1"/>
+                            <Label Text="{Binding apellido_persona}"  Grid.Row="0" Grid.Column="2"/>
+
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+    </Grid>
 </ContentPage>
