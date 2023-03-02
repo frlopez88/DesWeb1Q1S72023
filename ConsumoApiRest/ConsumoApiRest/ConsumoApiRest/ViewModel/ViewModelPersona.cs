@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.Json;
 using Xamarin.Forms;
 
@@ -15,39 +17,125 @@ namespace ConsumoApiRest.ViewModel
 
         public ViewModelPersona() {
 
-            
 
-            listarPersonas = new Command( async () => {
 
-                ListPersonas = new ObservableCollection<persona>();
+            crearPersonas = new Command( async () => {
 
-                HttpClient httpClient = new HttpClient();
 
-                var respuesta = await httpClient.GetAsync(url);
+                using (var httpClient = new HttpClient()) {
 
-                if (respuesta.IsSuccessStatusCode) {
-                
-                    var contenido = await respuesta.Content.ReadAsStringAsync();
-                    JsonSerializerOptions opciones = new JsonSerializerOptions() { 
-                        PropertyNameCaseInsensitive = true
+                    persona body1 = new persona() { 
+                        nombre_persona = this.nombre, 
+                        apellido_persona = this.apellido , 
+                        fecha_nacimiento = this.fechaNacimiento
                     };
-                    var listado = System.Text.Json.JsonSerializer.Deserialize<List<persona>>(contenido, opciones);
 
+                    var myContent = JsonConvert.SerializeObject(body1);
+                    var stringContent = new StringContent(myContent, UnicodeEncoding.UTF8, "application/json");
 
-                    foreach (var item in listado) {
+                    var respuesta = await httpClient.PostAsync(url, stringContent);
 
-                        ListPersonas.Add(item);
-
-
+                    if (respuesta.IsSuccessStatusCode) {
+                        
+                        getPersonas();
+                    
                     }
-                
+
                 }
 
+            });
+
+
+            actualizarPersona = new Command(async() => {
+
+                using (var httpClient = new HttpClient())
+                {
+
+                    persona body1 = new persona()
+                    {
+                        nombre_persona = this.nombre,
+                        apellido_persona = this.apellido,
+                        fecha_nacimiento = this.fechaNacimiento
+                    };
+
+                    var myContent = JsonConvert.SerializeObject(body1);
+                    var stringContent = new StringContent(myContent, UnicodeEncoding.UTF8, "application/json");
+
+                    var respuesta = await httpClient.PutAsync(url+"/"+personaSeleccionada.id_persona, stringContent);
+
+                    if (respuesta.IsSuccessStatusCode)
+                    {
+
+                        getPersonas();
+
+                    }
+
+                }
 
             });
-        
+
+            borrarPersona = new Command(async () => {
+
+                using (var httpClient = new HttpClient())
+                {
+
+                    var respuesta = await httpClient.DeleteAsync(url + "/" + personaSeleccionada.id_persona);
+
+                    if (respuesta.IsSuccessStatusCode)
+                    {
+
+                        getPersonas();
+
+                    }
+
+                }
+
+            } );
+
+
+            actualizarFormulario = new Command(() => {
+
+                Nombre = personaSeleccionada.nombre_persona;
+                Apellido = personaSeleccionada.apellido_persona;
+                FechaNacimiento = personaSeleccionada.fecha_nacimiento;
+
+            } );
+
+
+
+            getPersonas();
+
         }
-        
+
+        private async void getPersonas() {
+
+            ListPersonas = new ObservableCollection<persona>();
+
+            HttpClient httpClient = new HttpClient();
+
+            var respuesta = await httpClient.GetAsync(url);
+
+            if (respuesta.IsSuccessStatusCode)
+            {
+
+                var contenido = await respuesta.Content.ReadAsStringAsync();
+                JsonSerializerOptions opciones = new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                var listado = System.Text.Json.JsonSerializer.Deserialize<List<persona>>(contenido, opciones);
+
+
+                foreach (var item in listado)
+                {
+
+                    ListPersonas.Add(item);
+
+
+                }
+
+            }
+        }
 
         ObservableCollection<persona> listPersonas = new ObservableCollection<persona>();
 
@@ -113,10 +201,29 @@ namespace ConsumoApiRest.ViewModel
         }
 
 
+        persona personaSeleccionada = new persona();
+
+        public persona PersonaSeleccionada {
+
+            get => personaSeleccionada;
+            set {
+
+                personaSeleccionada = value;
+                var args = new PropertyChangedEventArgs(nameof(PersonaSeleccionada));
+                PropertyChanged?.Invoke(this, args);
+
+            }
+
+        }
+
+
         public DateTime FechaMin { get; set; } = new DateTime(1980, 01, 01);
 
 
-        public Command listarPersonas { get; }
+        public Command crearPersonas { get; }
+        public Command actualizarFormulario { get; }
+        public Command actualizarPersona { get; set; }
+        public Command borrarPersona { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
     }
 }

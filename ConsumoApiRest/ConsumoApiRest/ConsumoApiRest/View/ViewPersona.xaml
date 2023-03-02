@@ -16,6 +16,7 @@
             <RowDefinition Height="50" ></RowDefinition>
             <RowDefinition Height="50" ></RowDefinition>
             <RowDefinition Height="50" ></RowDefinition>
+            <RowDefinition Height="50" ></RowDefinition>
             <RowDefinition Height="*" ></RowDefinition>
 
         </Grid.RowDefinitions>
@@ -34,12 +35,20 @@
         <Label VerticalTextAlignment="End" Text="Fecha Nacimiento" Grid.Column="0" Grid.Row="2" />
         <DatePicker Date="{Binding FechaNacimiento}"  MinimumDate="{Binding FechaMin}"  Grid.Column="1" Grid.Row="2" />
 
-        <Button Command="{Binding listarPersonas}" Text="Get Persona" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" />
+        <Button Command="{Binding crearPersonas}" Text="Crear" Grid.Column="0" Grid.Row="3"  />
+        <Button Command="{Binding actualizarPersona}" Text="Actualizar" Grid.Column="1" Grid.Row="3"  />
+        <Button Command="{Binding borrarPersona}" Text="Borrar" Grid.Column="0" Grid.Row="4"  Grid.ColumnSpan="2"   />
+        
 
-        <ListView Grid.Row="4" Grid.ColumnSpan="2" Grid.Column="0"   ItemsSource="{Binding ListPersonas}">
-            <ListView.ItemTemplate>
+        <CollectionView Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0" 
+                        SelectedItem="{Binding PersonaSeleccionada}" 
+                        SelectionMode="Single"  
+                        ItemsSource="{Binding ListPersonas}"
+                        SelectionChangedCommand="{Binding actualizarFormulario}"
+                        >
+            <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <ViewCell>
+                   
                         <Grid Padding="10">
 
                             <Grid.RowDefinitions>
@@ -50,17 +59,19 @@
                                 <ColumnDefinition Width="*" ></ColumnDefinition>
                                 <ColumnDefinition Width="*" ></ColumnDefinition>
                                 <ColumnDefinition Width="*" ></ColumnDefinition>
+                                <ColumnDefinition Width="*" ></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
                             <Label Text="{Binding id_persona}"  Grid.Row="0" Grid.Column="0" />
                             <Label Text="{Binding nombre_persona}" Grid.Row="0" Grid.Column="1"/>
                             <Label Text="{Binding apellido_persona}"  Grid.Row="0" Grid.Column="2"/>
+                            <Label Text="{Binding fecha_nacimiento}"  Grid.Row="0" Grid.Column="3"/>
 
-                        </Grid>
-                    </ViewCell>
+                    </Grid>
+                    
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
     </Grid>
 </ContentPage>
